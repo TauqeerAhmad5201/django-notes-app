@@ -17,7 +17,7 @@ git clone https://github.com/LondheShubham153/django-notes-app.git
 docker build -t notes-app .
 ```
 
-3. Run the app
+3. Run the app through this
 ```
 docker run -d -p 8000:8000 notes-app:latest
 ```
