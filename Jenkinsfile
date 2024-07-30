@@ -1,35 +1,35 @@
 pipeline {
-    agent any 
-    
-    stages{
-        stage("Clone Code"){
+    agent any
+
+    stages {
+        stage('Cloning the code') {
             steps {
-                echo "Cloning the code"
-                git url:"https://github.com/LondheShubham153/django-notes-app.git", branch: "main"
+                echo "Cloning the Code"
+                git branch: 'main', url: "https://github.com/TauqeerAhmad5201/django-notes-app"
             }
         }
-        stage("Build"){
+        stage('Building the code') {
             steps {
-                echo "Building the image"
-                sh "docker build -t my-note-app ."
+                echo "Building the Code using Docker"
+                sh "docker build -t noteapp ."
             }
         }
-        stage("Push to Docker Hub"){
+        stage('Pushing to Docker Hub') {
             steps {
-                echo "Pushing the image to docker hub"
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker tag my-note-app ${env.dockerHubUser}/my-note-app:latest"
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker push ${env.dockerHubUser}/my-note-app:latest"
+                echo 'Pushing to Docker Hub'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerhubPass', usernameVariable: 'dockerhubUser')]){
+                sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPass}"
+                sh "docker tag noteapp ${env.dockerhubUser}/noteapp:latest"
+                sh "docker push ${env.dockerhubUser}/noteapp:latest"
                 }
             }
         }
-        stage("Deploy"){
+        stage('Deployment') {
             steps {
-                echo "Deploying the container"
-                sh "docker-compose down && docker-compose up -d"
-                
+                sh "docker run -d --name noteapp-cont -p 8000:8000 tauqeerops/noteapp:latest"
             }
         }
+        
+        
     }
 }
